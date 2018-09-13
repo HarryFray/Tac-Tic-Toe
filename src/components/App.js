@@ -7,53 +7,78 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: 0,
+      inputValue: 3,
       boardSize: 0,
       game: { board: [] },
-      turn: 'X'
+      turn: 'X',
+      message: 'WANNA PLAY A GAME?',
+      gameOver: false
     };
   }
 
-  updateNumberOfSearchResults(e) {
-    let number = e.target.value;
-    this.setState({
-      inputValue: number
-    });
-  }
-
   handleNewGame() {
-    this.setState({
-      boardSize: this.state.inputValue,
-      game: new Game(this.state.inputValue),
-      turn: 'X'
-    });
+    if (this.state.inputValue !== 0) {
+      this.setState({
+        boardSize: this.state.inputValue,
+        game: new Game(this.state.inputValue),
+        message: `IT'S YOUR TURN ${this.state.turn}`,
+        gameOver: false
+      });
+    }
   }
 
   handleCellSelect(cord) {
-    this.setState(prevState => {
-      return {
-        Game: prevState.game.move(...cord, this.state.turn),
-        turn: prevState.turn === 'X' ? 'O' : 'X'
-      };
-    });
+    if (!this.state.gameOver) {
+      this.setState(
+        prevState => {
+          return {
+            Game: prevState.game.move(...cord, this.state.turn),
+            turn: prevState.turn === 'X' ? 'O' : 'X',
+            message: `IT'S YOUR TURN ${this.state.turn === 'X' ? 'O' : 'X'}`
+          };
+        },
+        () => {
+          this.checkForWinningMove(cord);
+        }
+      );
+    }
+  }
+
+  checkForWinningMove(cord) {
+    if (this.state.game.checkForAWin(cord)) {
+      this.setState({
+        message: `${this.state.turn === 'X' ? 'O' : 'X'} HAS WON!`,
+        turn: 'X',
+        gameOver: true
+      });
+    }
+  }
+
+  updateInputValue(e) {
+    let input = e.target.value;
+    if (input > 0) {
+      this.setState({
+        inputValue: input
+      });
+    }
   }
 
   render() {
     return (
       <Wrapper>
-        <Controlls>
+        <Nav>
           <div>
-            <button onClick={this.handleNewGame.bind(this)}>
-              Create New Game
-            </button>
+            <button onClick={this.handleNewGame.bind(this)}>NEW GAME</button>
             <input
               type="number"
               value={this.state.inputValue}
-              onChange={this.updateNumberOfSearchResults.bind(this)}
+              onChange={this.updateInputValue.bind(this)}
             />
           </div>
-        </Controlls>
-        <h2>{`${this.state.turn} it's your turn!`}</h2>
+          <div>
+            <h1>{this.state.message}</h1>
+          </div>
+        </Nav>
         <Grid boardSize={this.state.boardSize}>
           {[].concat.apply([], this.state.game.board).map(cellData => {
             return (
@@ -94,14 +119,20 @@ const Grid = styled.div`
   grid-template-columns: repeat(${props => props.boardSize}, 1fr);
 `;
 
-const Controlls = styled.div`
+const Nav = styled.div`
   display: flex;
   align-itmes: center;
   justify-content: center;
   background-color: orange;
-  height: 100px;
-
+  height: 80px;
+  margin-bottom: 20px;
+  padding: 10px;
   div {
-    height: 50px;
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    input {
+      width: 50px;
+    }
   }
 `;

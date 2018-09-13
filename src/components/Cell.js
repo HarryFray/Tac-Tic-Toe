@@ -4,11 +4,11 @@ import styled from 'styled-components';
 class Cell extends Component {
   cellSelected() {
     const { cord, mark } = this.props.cellData;
-
     if (mark !== 'O' && mark !== 'X') {
       this.props.handleCellSelect(cord);
     }
   }
+
   render() {
     return (
       <Wrapper onClick={() => this.cellSelected()}>
