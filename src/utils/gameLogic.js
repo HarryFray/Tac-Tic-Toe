@@ -1,4 +1,4 @@
-class Game {
+export default class Game {
   constructor(size) {
     this.board = (() => {
       let board = [];
@@ -13,6 +13,7 @@ class Game {
   }
 
   move(x, y, player) {
-    this.board[x][y].mark = player;
+    this.board[y][x].mark = player;
+    return this.board;
   }
 }

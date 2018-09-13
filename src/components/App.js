@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Cell from './Cell';
+import Game from '../utils/gameLogic';
 
 class App extends Component {
   constructor(props) {
@@ -8,10 +9,8 @@ class App extends Component {
     this.state = {
       inputValue: 0,
       boardSize: 0,
-      board: [
-        [{ location: [0, 0], mark: 'X' }, { location: [0, 1], mark: 'O' }],
-        [{ location: [1, 0], mark: 'X' }, { location: [1, 1], mark: '' }]
-      ]
+      game: { board: [] },
+      turn: 'X'
     };
   }
 
@@ -24,11 +23,19 @@ class App extends Component {
 
   handleNewGame() {
     this.setState({
-      boardSize: this.state.inputValue
+      boardSize: this.state.inputValue,
+      game: new Game(this.state.inputValue),
+      turn: 'X'
     });
-    // this.setState({
-    //   board: new Game(this.boardSize)
-    // });
+  }
+
+  handleCellSelect(cord) {
+    this.setState(prevState => {
+      return {
+        Game: prevState.game.move(...cord, this.state.turn),
+        turn: prevState.turn === 'X' ? 'O' : 'X'
+      };
+    });
   }
 
   render() {
@@ -46,9 +53,16 @@ class App extends Component {
             />
           </div>
         </Controlls>
+        <h2>{`${this.state.turn} it's your turn!`}</h2>
         <Grid boardSize={this.state.boardSize}>
-          {[].concat.apply([], this.state.board).map(cellData => {
-            return <Cell cellData={cellData} />;
+          {[].concat.apply([], this.state.game.board).map(cellData => {
+            return (
+              <Cell
+                cellData={cellData}
+                key={cellData.cord}
+                handleCellSelect={this.handleCellSelect.bind(this)}
+              />
+            );
           })}
         </Grid>
       </Wrapper>

@@ -2,8 +2,19 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 class Cell extends Component {
+  cellSelected() {
+    const { cord, mark } = this.props.cellData;
+
+    if (mark !== 'O' && mark !== 'X') {
+      this.props.handleCellSelect(cord);
+    }
+  }
   render() {
-    return <Wrapper>{this.props.cellData.location[0]}</Wrapper>;
+    return (
+      <Wrapper onClick={() => this.cellSelected()}>
+        {this.props.cellData.mark}
+      </Wrapper>
+    );
   }
 }
 
