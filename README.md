@@ -18,7 +18,7 @@ or
 npm i
 ```
 
-## To Run
+### To Run
 
 ```
 yarn start
