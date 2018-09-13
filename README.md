@@ -6,9 +6,7 @@ A Fun Game!
 
 Either choose a board size or crush it with 3X3
 
-### Set Up
-
-To install either
+### Instaling
 
 ```
 yarn install
@@ -20,7 +18,7 @@ or
 npm i
 ```
 
-To install either
+## To Run
 
 ```
 yarn start
